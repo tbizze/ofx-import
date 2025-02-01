@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +27,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Add your application routes here...
+    Route::resource('bank-accounts', BankAccountController::class)->except('show');
+
+    // Transações -> resource parcial.
+    Route::resource('bank-accounts.transactions', TransactionController::class)->except('show');
 });
