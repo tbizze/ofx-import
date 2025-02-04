@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionImportController;
 use Illuminate\Support\Facades\Route;
@@ -48,4 +49,7 @@ Route::middleware([
 
     Route::get('/transactions/import', [TransactionImportController::class, 'import'])->name('transactions.import');
     Route::post('/transactions/process', [TransactionImportController::class, 'processImport'])->name('transactions.process');
+
+    Route::get('/upload', [ReportController::class, 'showUploadForm'])->name('upload.form');
+    Route::post('/process', [ReportController::class, 'processUpload'])->name('process.upload');
 });
