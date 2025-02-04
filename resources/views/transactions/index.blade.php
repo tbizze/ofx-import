@@ -24,28 +24,19 @@
                         </a>
                     </div>
 
-                    <table class="min-w-full w-full table-auto text-left">
-                        <thead>
-                            <tr class="bg-slate-600 ">
-                                <th class="p-2 ">#</th>
-                                <th class="p-2">Data</th>
-                                <th>Histórico</th>
-                                <th class=" text-right">Valor</th>
-                                <th class=" pl-1">Tipo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($transactions as $item)
-                                <tr class="text-sm border-b ">
-                                    <td class="px-2 py-2 w-10">{{ $item->id }}</td>
-                                    <td class="px-2 py-2">{{ $item->dateBr }}</td>
-                                    <td>{{ $item->description }}</td>
-                                    <td class=" text-right">{{ number_format($item->amount, 2, ',', '.') }}</td>
-                                    <td class="pl-1 uppercase">{{ $item->typeBr }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <!-- Aqui o conteúdo -->
+                    <x-my.table :records="$dados" baseRoute="categories" showHeading="" :columns="[
+                        ['name' => '#', 'field' => 'id', 'sort' => 'true'],
+                        ['name' => 'Data', 'field' => 'dateBr', 'sort' => 'true'],
+                        ['name' => 'Histórico', 'field' => 'description', 'sort' => 'true'],
+                        ['name' => 'Valor', 'field' => 'amountBr', 'sort' => 'true', 'classCell' => 'flex justify-end'],
+                        ['name' => 'Tipo', 'field' => 'typeBr', 'sort' => 'true'],
+                    ]" />
+
+                    {{-- Paginação --}}
+                    <div class="px-4 py-3 text-right sm:px-6">
+                        {{ $dados->links() }}
+                    </div>
                 </div>
             </div>
         </div>
