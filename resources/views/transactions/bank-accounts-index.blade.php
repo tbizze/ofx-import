@@ -14,9 +14,15 @@
 
                     <div class="flex justify-between items-center">
                         <h1 class="py-5 text-xl">Gerenciar Contas Bancárias</h1>
-                        <a href="{{ route('bank-accounts.create') }}"
-                            class="rounded border-slate-700 bg-slate-700 py-3 px-4">Adicionar
-                            Conta</a>
+                        <div class="flex justify-end gap-2">
+                            <a href="{{ route('transactions.import') }}"
+                                class="rounded border-slate-700 bg-slate-700 py-3 px-4">Importar OFX
+                            </a>
+                            <a href="{{ route('bank-accounts.create') }}"
+                                class="rounded border-slate-700 bg-slate-700 py-3 px-4">Adicionar Conta
+                            </a>
+                        </div>
+
                     </div>
                     <table class="min-w-full w-full table-auto text-left">
                         <thead>

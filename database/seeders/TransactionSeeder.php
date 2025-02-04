@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\BankAccount;
 use App\Models\Transaction;
+use App\Models\TransactionHeader;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class TransactionSeeder extends Seeder
 {
@@ -16,30 +16,38 @@ class TransactionSeeder extends Seeder
     public function run(): void
     {
 
-        $dados = $this->makeTransactions(2);
-        //dd($dados);
+        $dados = $this->makeTransactions(15);
 
-        foreach ($dados as $item) {
-            // Salva no BD documento criado.
-            $x = Transaction::create($item);
-        }
-        dd($x);
+        foreach ($dados as $account) {
 
-        if (count($documentos) > 0) {
-            // Abre uma transaction para salvar no BC os dados fake criado
-            DB::transaction(function () use ($documentos) {
+            // Adiciona no array $transactionHeader os dados da transação.
+            $transactionHeader = [
+                'account_number'       => $account['account_number'],
+                'bank_number'          => $account['bank_number'],
+                'account_balance'      => $account['account_balance'],
+                'account_balance_date' => $account['account_balance_date'],
+                'number_transactions'  => $account['number_transactions'],
+            ];
+            // Salva no BD o cabeçalho da transação.
+            // Obtém o ID do novo cabeçalho de transação para relacionar com as transações.
+            $transactionDb = TransactionHeader::create($transactionHeader);
 
-                // Limpar a tabela de contas bancárias para garantir um novo estado inicial.
-                Transaction::query()->delete();
+            foreach ($account['items'] as $item) {
 
-                foreach ($documentos as $item) {
-                    // Salva no BD documento criado.
-                    Transaction::create($item);
-                }
-            });
-            //dd('Documentos criados com sucesso!');
-        } else {
-            dump('Nenhum documento criado');
+                // Adiciona no array $item os dados da transação.
+                $item = [
+                    'transaction_header_id' => $transactionDb['id'],
+                    'bank_account_id'       => $item['bank_account_id'],
+                    'date'                  => $item['date'],
+                    'type'                  => $item['type'],
+                    'amount'                => $item['amount'],
+                    'description'           => $item['description'],
+                    'fitid'                 => $item['fitid'],
+                    'checknum'              => $item['checknum'],
+                ];
+                // Salva no BD transação criada.
+                Transaction::create($item);
+            }
         }
     }
 
@@ -49,14 +57,22 @@ class TransactionSeeder extends Seeder
         $faker = Faker::create('pt_BR');
 
         // Recuperar todas as empresas cadastradas.
-        $bankAccounts = BankAccount::all()->pluck('id');
+        $bankAccounts = BankAccount::all();
 
-        $documentos = [];
+        // Inicializa o array para armazenar as transações.
+        $transactions = [];
 
+        // Faz loop nas contas.
         foreach ($bankAccounts as $item) {
+
+            // Inicializa o array para armazenar as transações de um $account.
+            $items = [];
+
+            // Faz loop nas transações.
             for ($count = 1; $count <= $qdeTransactions; $count++) {
-                $documentos[] = [
-                    'bank_account_id' => $item,
+                // Adiciona no array $item os dados da transação.
+                $items[] = [
+                    'bank_account_id' => $item->id,
                     'description'     => $faker->sentence(3),
                     'type'            => $faker->randomElement(['credit', 'debit']),
                     'amount'          => $faker->randomFloat(2, 17.45, 862.13),
@@ -65,8 +81,17 @@ class TransactionSeeder extends Seeder
                     'checknum'        => $faker->bothify('########'),
                 ];
             }
+            // Adiciona no array $transactions os dados da transação.
+            $transactions[] = [
+                'account_number'       => $item->account_number,
+                'bank_number'          => $item->bank_id,
+                'account_balance'      => $faker->randomFloat(2, 17.45, 862.13),
+                'account_balance_date' => $faker->dateTimeBetween($startDate, $endDate),
+                'number_transactions'  => $qdeTransactions,
+                'items'                => $items,
+            ];
         }
 
-        return collect($documentos);
+        return collect($transactions);
     }
 }

@@ -13,6 +13,7 @@ class Transaction extends Model
 
     protected $fillable = [
         'bank_account_id',
+        'transaction_header_id',
         'type',
         'date',
         'amount',
@@ -31,7 +32,7 @@ class Transaction extends Model
     protected function dateBr(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->date
+            get: fn () => $this->date->format('d/m/Y')
         );
     }
     /**
@@ -41,6 +42,15 @@ class Transaction extends Model
     {
         return Attribute::make(
             get: fn () => $this->type == 'credit' ? 'C' : 'D'
+        );
+    }
+    /**
+     * @return Attribute<string, never>
+     */
+    protected function amountBr(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->amount ? number_format($this->amount, 2, ',', '.') : ''
         );
     }
 
