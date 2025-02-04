@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransactionImportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    // Verifica se a aplicação está em modo de desenvolvimento = 'local'
+    if (app()->isLocal()) {
+        // Faz login como usuário de ID = 1.
+        auth()->loginUsingId(1);
+
+        // Redireciona para a view 'dashboard'.
+        return to_route('dashboard');
+    }
+
+    // Quando aplicação está definido 'production' = produção.
+    // Retorna a view 'welcome'.
     return view('welcome');
 });
 
@@ -33,4 +45,7 @@ Route::middleware([
 
     // Transações -> resource parcial.
     Route::resource('bank-accounts.transactions', TransactionController::class)->except('show');
+
+    Route::get('/transactions/import', [TransactionImportController::class, 'import'])->name('transactions.import');
+    Route::post('/transactions/process', [TransactionImportController::class, 'processImport'])->name('transactions.process');
 });
