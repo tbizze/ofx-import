@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\BankStatementImport;
+use App\Imports\TransactionNewImport;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -13,25 +16,21 @@ class ReportController extends Controller
         return view('statements.report');
     }
 
-    /* public function processUpload(Request $request, TransactionService $transactionService): View
+    // public function processUpload(Request $request, TransactionService $transactionService): View
+    public function processUpload(Request $request): View
     {
-        // dd($request->all());
+        //dump($request->all());
 
-        // $request->validate([
-        //     'transactions_file' => 'required|file|mimes:json,csv',
-        //     'statements_file' => 'required|file|mimes:json,csv',
-        // ]);
+        $request->validate([
+            'transactions_file' => 'required|file',
+            'statements_file'   => 'required|file',
+        ]);
 
-        $x = file_get_contents($request->file('transactions_file'));
-        $y = file_get_contents($request->file('statements_file'));
-        dump($x, $y);
-        dump();
+        // Importar dados da planilha de extrato.
+        $x = Excel::import(new BankStatementImport(), $request->file('statements_file'));
 
-        // Processar arquivos e converter em arrays
-        $transactions = json_decode(file_get_contents($request->file('transactions_file')), true);
-        $statements = json_decode(file_get_contents($request->file('statements_file')), true);
-
-        dd($transactions, $statements);
+        // Importar dados da planilha de transações de recebimentos.
+        $z = Excel::import(new TransactionNewImport(), $request->file('transactions_file'));
 
         // Comparar transações e lançamentos
         // $result = $transactionService->compareTransactionsWithStatements(
@@ -39,6 +38,7 @@ class ReportController extends Controller
         //     collect($statements)
         // );
 
-        return view('report', ['result' => $result]);
-    } */
+        return view('statements.report');
+        // return view('report', ['result' => $result]);
+    }
 }
