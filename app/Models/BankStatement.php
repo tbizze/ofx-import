@@ -13,6 +13,7 @@ class BankStatement extends Model
         'date',
         'type',
         'description',
-        'value',
+        'entries',
+        'exits',
     ];
 }

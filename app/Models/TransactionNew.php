@@ -10,9 +10,11 @@ class TransactionNew extends Model
     use HasFactory;
 
     protected $fillable = [
+        'transaction_id',
         'transaction_date',
         'operation',
-        'brand',
+        'flag',
+        'payment_method',
         'gross_value',
         'net_value',
         'fee_value',

@@ -12,9 +12,11 @@ return new class () extends Migration {
     {
         Schema::create('transaction_news', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_id');
             $table->dateTime('transaction_date');
             $table->string('operation');
-            $table->string('brand')->nullable();
+            $table->string('flag')->nullable();
+            $table->string('payment_method')->nullable();
             $table->decimal('gross_value', 10, 2);
             $table->decimal('net_value', 10, 2);
             $table->decimal('fee_value', 10, 2);

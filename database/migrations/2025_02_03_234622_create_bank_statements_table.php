@@ -15,7 +15,8 @@ return new class () extends Migration {
             $table->date('date');
             $table->string('type');
             $table->string('description')->nullable();
-            $table->decimal('value', 10, 2);
+            $table->decimal('entries', 10, 2)->nullable();
+            $table->decimal('exits', 10, 2)->nullable();
             $table->timestamps();
         });
     }
